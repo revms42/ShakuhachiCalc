@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">ShakuhachiCalc</string>
+
+    <string name="bore_top">Bore Top</string>
+    <string name="bore_bottom">Bore Bottom</string>
+    <string name="blowing_edge_width">Utaguchi Width</string>
+    <string name="blowing_edge_height">Utaguchi Height</string>
+    <string name="flute_length">Total Length</string>
+    <string name="hole_1_position">Hole #1</string>
+    <string name="hole_2_position">Hole #2</string>
+    <string name="hole_3_position">Hole #3</string>
+    <string name="hole_4_position">Hole #4</string>
+    <string name="hole_5_position">Hole #5 (Rear)</string>
+
+</resources>
