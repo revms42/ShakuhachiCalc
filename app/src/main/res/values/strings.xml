@@ -11,5 +11,8 @@
     <string name="hole_3_position">Hole #3</string>
     <string name="hole_4_position">Hole #4</string>
     <string name="hole_5_position">Hole #5 (Rear)</string>
+    <string name="hole_diameter">Finger Hole Diameter</string>
+    <string name="ear_ratio">Equivalent Aspect Ratio (EAR)</string>
+    <string name="dark">Dark?</string>
 
 </resources>

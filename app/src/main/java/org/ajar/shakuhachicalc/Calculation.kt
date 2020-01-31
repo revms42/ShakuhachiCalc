@@ -15,7 +15,6 @@ sealed class Calculation : CalculationDesc {
     object Bright : Calculation() {
         override fun lengthFromBore(boreDia: Double) : Double = 17.0 * boreDia.pow(sixFifths)
         override fun boreFromLength(length: Double): Double = (length / 17.0).pow(fiveSixths)
-        fun holeFromBore(boreDia: Double) : Double = boreDia.pow(fourFifths)
         override fun holeFromLength(length: Double) : Double = (length / 17.0).pow(twoThirds)
     }
 
@@ -30,5 +29,32 @@ sealed class Calculation : CalculationDesc {
         private const val fourFifths = 0.8
         private const val fiveSixths = (5.0/6.0)
         private const val twoThirds = (2.0/3.0)
+
+        private const val earConst = 2.858
+
+        private const val holePlacementScaleConst = 545.0
+        private const val bottomHoleConst = 121.0
+        private const val holeToHoleConst = 10.0
+        private const val hole4to5Const = 36.0
+
+        fun computeEAR(boreDia: Double, length: Double): Double = (earConst * length.pow(fiveSixths)) / boreDia
+        fun computeBoreFromEAR(ear: Double, length: Double) : Double = (earConst * length.pow(fiveSixths)) / ear
+        fun computeLengthFromEAR(ear: Double, boreDia: Double) : Double = ((boreDia * ear) / earConst).pow(sixFifths)
+
+        /**
+         * length is in mm.
+         */
+        fun computeHolePosition(position: Int, length: Double) : Double {
+            return when (position) {
+                1 -> (bottomHoleConst * length) / holePlacementScaleConst
+                2, 3, 4 -> computeHolePosition(position - 1, length) + (length / holeToHoleConst)
+                5 -> computeHolePosition(4, length) + ((hole4to5Const * length) / holePlacementScaleConst)
+                else -> -1.0
+            }
+        }
+
+        fun utaguchiWidth(boreDia: Double) : Double = (boreDia * Math.PI) / 4.0
+        fun utaguchiHeight(boreDia: Double) : Double = utaguchiWidth(boreDia) / 5.0
+        fun holeFromBore(boreDia: Double) : Double = boreDia.pow(fourFifths)
     }
 }
