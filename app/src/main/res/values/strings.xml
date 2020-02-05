@@ -13,6 +13,7 @@
     <string name="hole_5_position">Hole #5 (Rear)</string>
     <string name="hole_diameter">Finger Hole Diameter</string>
     <string name="ear_ratio">Equivalent Aspect Ratio (EAR)</string>
+    <string name="nearest_note">Nearest Note (Principle)</string>
     <string name="dark">Dark?</string>
 
 </resources>
