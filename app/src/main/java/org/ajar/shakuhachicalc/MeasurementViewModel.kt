@@ -16,18 +16,20 @@ class MeasurementViewModel : ViewModel() {
     val topBore = NumberTransformBinding()
     val bottomBore = NumberTransformBinding()
     val length = NumberTransformBinding()
+    val wallThickness = NumberTransformBinding()
     val utaguchiWidth: LiveData<String>
     val utaguchiHeight: LiveData<String>
     val fingerHoleDiameter: LiveData<String>
     val earRatio = MediatorLiveData<String>()
     val nearestNote: LiveData<String>
-    val holeOne: LiveData<String>
-    val holeTwo: LiveData<String>
-    val holeThree: LiveData<String>
-    val holeFour: LiveData<String>
-    val holeFive: LiveData<String>
+    val holeOne = MediatorLiveData<String>()
+    val holeTwo = MediatorLiveData<String>()
+    val holeThree = MediatorLiveData<String>()
+    val holeFour = MediatorLiveData<String>()
+    val holeFive = MediatorLiveData<String>()
 
     val isBright = MutableLiveData<Boolean>()
+    val useNavaching = MutableLiveData<Boolean>()
 
     var calculation: CalculationDesc = Calculation.Bright
 
@@ -59,10 +61,86 @@ class MeasurementViewModel : ViewModel() {
             earRatio.value = Calculation.computeEAR(averageBore.toDouble(), length.number.value?.toDouble()?: 0.0).toString()
         }
         nearestNote = Transformations.map(length.number) { Calculation.findKey(it.toDouble()) }
-        holeOne = Transformations.map(length.number) { Calculation.computeHolePosition(1, it.toDouble()).toString() }
-        holeTwo = Transformations.map(length.number) { Calculation.computeHolePosition(2, it.toDouble()).toString() }
-        holeThree = Transformations.map(length.number) { Calculation.computeHolePosition(3, it.toDouble()).toString() }
-        holeFour = Transformations.map(length.number) { Calculation.computeHolePosition(4, it.toDouble()).toString() }
-        holeFive = Transformations.map(length.number) { Calculation.computeHolePosition(5, it.toDouble()).toString() }
+
+        createHoleBinding(1, holeOne)
+        createHoleBinding(2, holeTwo)
+        createHoleBinding(3, holeThree)
+        createHoleBinding(4, holeFour)
+        createHoleBinding(5, holeFive)
+    }
+
+    private fun createHoleBinding(pos: Int, hole: MediatorLiveData<String>) {
+        hole.addSource(length.number) { length ->
+            if(wallThickness.number.value != null) {
+                hole.value = writeHolePositionLine(
+                    useNavaching.value?: false,
+                    pos,
+                    length.toDouble(),
+                    averageBore.toDouble(),
+                    fingerHoleDiameter.value!!.toDouble(),
+                    wallThickness.number.value!!.toDouble()
+                )
+            }
+        }
+        hole.addSource(topBore.number) {
+            if(wallThickness.number.value != null && length.number.value != null) {
+                hole.value = writeHolePositionLine(
+                    useNavaching.value?: false,
+                    pos,
+                    length.number.value!!.toDouble(),
+                    averageBore.toDouble(),
+                    fingerHoleDiameter.value!!.toDouble(),
+                    wallThickness.number.value!!.toDouble()
+                )
+            }
+        }
+        hole.addSource(bottomBore.number) {
+            if(wallThickness.number.value != null && length.number.value != null) {
+                hole.value = writeHolePositionLine(
+                    useNavaching.value?: false,
+                    pos,
+                    length.number.value!!.toDouble(),
+                    averageBore.toDouble(),
+                    fingerHoleDiameter.value!!.toDouble(),
+                    wallThickness.number.value!!.toDouble()
+                )
+            }
+        }
+        hole.addSource(wallThickness.number) { wallThickness ->
+            if(length.number.value != null) {
+                hole.value = writeHolePositionLine(
+                    useNavaching.value?: false,
+                    pos,
+                    length.number.value!!.toDouble(),
+                    averageBore.toDouble(),
+                    fingerHoleDiameter.value!!.toDouble(),
+                    wallThickness.toDouble()
+                )
+            }
+        }
+        hole.addSource(useNavaching) {
+            if(wallThickness.number.value != null && length.number.value != null) {
+                hole.value = writeHolePositionLine(
+                    it,
+                    pos,
+                    length.number.value!!.toDouble(),
+                    averageBore.toDouble(),
+                    fingerHoleDiameter.value!!.toDouble(),
+                    wallThickness.number.value!!.toDouble()
+                )
+            }
+        }
+    }
+
+    companion object {
+        private fun writeHolePositionLine(navaching: Boolean, pos: Int, length: Double, bore: Double, hole: Double, wall: Double) : String {
+            val number = if(navaching) {
+                Calculation.computeHolePositionNavaching(pos, length, hole, bore, wall)
+            } else {
+                Calculation.computeHolePosition10ths(pos, length)
+            }
+
+            return if(number.isFinite()) number.toString() else "NaN"
+        }
     }
 }

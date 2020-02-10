@@ -3,6 +3,7 @@
 
     <string name="bore_top">Bore Top</string>
     <string name="bore_bottom">Bore Bottom</string>
+    <string name="wall_thickness">Wall Thickness</string>
     <string name="blowing_edge_width">Utaguchi Width</string>
     <string name="blowing_edge_height">Utaguchi Height</string>
     <string name="flute_length">Total Length</string>
@@ -15,5 +16,6 @@
     <string name="ear_ratio">Equivalent Aspect Ratio (EAR)</string>
     <string name="nearest_note">Nearest Note (Principle)</string>
     <string name="dark">Dark?</string>
+    <string name="navaching">Use Navaching?</string>
 
 </resources>

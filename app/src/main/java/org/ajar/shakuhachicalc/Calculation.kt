@@ -97,6 +97,8 @@ sealed class Calculation : CalculationDesc {
         private const val hole4to5Const = 36.0
         private const val velocityOfSoundInAir = 350000.0 // mm/s
 
+        private const val hzNumber = 165674.0
+
         fun computeEAR(boreDia: Double, length: Double): Double = (earConst * length.pow(fiveSixths)) / boreDia
         fun computeBoreFromEAR(ear: Double, length: Double) : Double = (earConst * length.pow(fiveSixths)) / ear
         fun computeLengthFromEAR(ear: Double, boreDia: Double) : Double = ((boreDia * ear) / earConst).pow(sixFifths)
@@ -104,13 +106,49 @@ sealed class Calculation : CalculationDesc {
         /**
          * length is in mm.
          */
-        fun computeHolePosition(position: Int, length: Double) : Double {
+        fun computeHolePosition10ths(position: Int, length: Double) : Double {
             return when (position) {
                 1 -> (bottomHoleConst * length) / holePlacementScaleConst
-                2, 3, 4 -> computeHolePosition(position - 1, length) + (length / holeToHoleConst)
-                5 -> computeHolePosition(4, length) + ((hole4to5Const * length) / holePlacementScaleConst)
+                2, 3, 4 -> computeHolePosition10ths(position - 1, length) + (length / holeToHoleConst)
+                5 -> computeHolePosition10ths(4, length) + ((hole4to5Const * length) / holePlacementScaleConst)
                 else -> -1.0
             }
+        }
+
+        /**
+         * From the Shakuhachi navaching pages
+         */
+        fun computeHolePositionNavaching(position: Int, length: Double, holeDia: Double, boreDia: Double, wallThickness: Double) : Double {
+            if (position == 0 || position > 5) return -1.0
+            val baseNote = 156521.0 / length
+            val tHoleEffThick = wallThickness + (0.75 * holeDia)
+            val idealLength = hzNumber / baseNote
+
+            val mpEquivLength = idealLength - (0.3 * boreDia) - length
+
+            var holeLoc = 0.0
+            var lastLength = idealLength
+            for(pos in 1..position) {
+                val temp = when(pos) {
+                    1 -> 3
+                    2 -> 5
+                    3 -> 7
+                    4 -> 10
+                    5 -> 12
+                    else -> 1
+                }
+
+                val hZ = baseNote * 2.0.pow(temp / 12.0)
+                val newLength = hzNumber / hZ
+                val s = (lastLength - newLength) / 2.0
+                val correctionFac = s * ((((((tHoleEffThick / s) * ((boreDia / holeDia).pow(2.0))) * 2.0) + 1.0).pow(0.5)) - 1)
+                holeLoc = newLength - mpEquivLength - correctionFac
+
+                lastLength = newLength + correctionFac
+            }
+
+            // There is additional calculation to be done for outside ergonomic limit hole locations.
+            return length - holeLoc
         }
 
         fun utaguchiWidth(boreDia: Double) : Double = (boreDia * Math.PI) / 4.0

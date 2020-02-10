@@ -12,12 +12,27 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         tools:context=".MeasurementsActivity">
-        <CheckBox
-            android:id="@+id/checkBox"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/dark"
-            android:checked="@={viewModel.isBright}"/>
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/checkBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dark"
+                android:checked="@={viewModel.isBright}"/>
+
+            <CheckBox
+                android:id="@+id/navachingBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/navaching"
+                android:checked="@={viewModel.useNavaching}"/>
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,6 +93,26 @@
                 android:ems="10"
                 android:inputType="number"
                 android:text="@={viewModel.length.text}"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/wall_thickness" />
+
+            <EditText
+                android:id="@+id/wall_thickness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:inputType="number"
+                android:text="@={viewModel.wallThickness.text}"/>
         </LinearLayout>
 
         <LinearLayout
