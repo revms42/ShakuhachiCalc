@@ -24,14 +24,14 @@ enum class Key(val rep: String) {
             0 -> this
             in 1..12 -> {
                 when(this) {
-                    A -> G_S.step(dir - 1)
-                    else -> values()[this.ordinal - 1].step(dir - 1)
+                    G_S -> A.step(dir - 1)
+                    else -> values()[this.ordinal + 1].step(dir - 1)
                 }
             }
             in -1 downTo -12 -> {
                 when(this) {
-                    G_S -> A.step(dir + 1)
-                    else -> values()[this.ordinal + 1].step(dir + 1)
+                    A -> G_S.step(dir + 1)
+                    else -> values()[this.ordinal - 1].step(dir + 1)
                 }
             }
             else -> throw NumberFormatException("Wrong dimension $dir")
